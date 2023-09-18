@@ -1,0 +1,118 @@
+
+syntax = "proto3";
+option java_multiple_files = true;
+
+package bank;
+
+// Services
+
+service CreateAccount
+{
+  rpc hello (CreateAccount) returns (CreateAccount) {}
+}
+
+service CloseAccount
+{
+  rpc hello (CloseAccount) returns (CloseAccount) {}
+}
+
+service Balance 
+{
+  rpc hello (BalanceRequest) returns (BalanceReply) {}
+}
+
+service Deposit 
+{
+  rpc hello (DepositRequest) returns (DepositReply) {}
+}
+
+service Withdraw 
+{
+  rpc hello(WithdrawRequest) returns (WithdrawReply) {}
+}
+
+service Transfer
+{
+  rpc hello (TransferRequest) returns (TransferReply) {}
+}
+
+service TotalBalance
+{
+  rpc hello (TotalBalanceRequest) returns (TotalBalanceRequest) {}
+}
+
+// Messages
+
+message CreateAccount
+{
+  int64 balance= 1;
+}
+
+message CreateAccountReply
+{
+  int64 acc_number= 1;
+}
+
+message CloseAccount
+{
+  int64 acc_number= 1;
+}
+
+message CloseAccountReply
+{
+  int64 balence_failure= 1;
+}
+
+message BalanceRequest 
+{
+  int64 acc_number= 1;
+}
+
+message BalanceReply 
+{
+  int64 balance= 1;
+}
+
+message DepositRequest 
+{
+  int64 acc_number= 1;
+  int64 amount= 2;
+}
+
+message DepositResponse
+{
+  bool success= 1;
+}
+
+message WithdrawRequest
+{
+  int64 acc_number= 1;
+  int64 amount= 2;
+}
+
+message WithdrawResponse
+{
+  bool success= 1;
+}
+
+message TransferRequest
+{
+  int64 acc_from= 1;
+  int64 acc_to= 2;
+  int64 amount= 3;
+}
+
+message TransferResponse
+{
+  bool success= 1;
+}
+
+message TotalBalanceRequest
+{
+  repeted int64 acc_numbers= 1;
+}
+
+message TotalBalanceResponse
+{
+  int64 sum= 1;
+}
