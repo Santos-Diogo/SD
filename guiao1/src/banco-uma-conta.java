@@ -1,11 +1,16 @@
+import java.util.concurrent.locks.ReentrantLock;
+
 class Bank {
 
-  private static class Account {
+  private static class Account extends ReentrantLock
+  {
     private long balance;
     Account(long balance) { this.balance = balance; }
     long balance() { return balance; }
     boolean deposit(long value) {
+      this.lock();
       balance += value;
+      this.unlock();
       return true;
     }
   }
