@@ -106,7 +106,7 @@ public class Bank {
 
     boolean transfer (int from, int to, int value)
     {
-        av[from].lock();   
+        av[from].lock();
         try
         {
             if (withdraw(from, value))
