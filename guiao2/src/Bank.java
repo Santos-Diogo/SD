@@ -106,28 +106,37 @@ public class Bank {
 
     boolean transfer (int from, int to, int value)
     {
-        if (from< 0 || from>= slots || to< 0 || from>= slots)
-            return false;
-
-        av[from].lock();
-        av[to].lock();
-
+        av[from].lock();   
         try
         {
-            if (!av[from].withdraw(value))
-                return false;
-
-            return true;
+            if (withdraw(from, value))
+            return false;
         }
         finally
         {
             av[from].unlock();
+        }
+        
+        av[to].lock();
+        try
+        {
+            deposit(to, value);
+            return true;
+        }
+        finally
+        {
             av[to].unlock();
         }
     }
 
     int totalBalance()
     {
-        return 10000;
+        int sum= 0;
+        for (int i= 0; i< slots; i++)
+        {
+            sum+= balance(i);
+        }
+
+        return sum;
     }
 }
