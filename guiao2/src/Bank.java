@@ -3,8 +3,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Bank {
 
     private static class Account extends ReentrantLock{
+        public ReentrantLock l= new ReentrantLock();
         private int balance;
-
 
         Account(int balance)
         {
@@ -15,18 +15,18 @@ public class Bank {
         {
             int b;
 
-            this.lock();
+            this.l.lock();
             b= balance; 
-            this.unlock();
+            this.l.unlock();
 
             return b;
         }
 
         boolean deposit(int value)
         {
-            this.lock();
+            this.l.lock();
             balance += value;
-            this.unlock();
+            this.l.unlock();
 
             return true;
         }
@@ -35,9 +35,9 @@ public class Bank {
         {
             if (value > balance)
                 return false;
-            this.lock();
+            this.l.lock();
             balance -= value;
-            this.unlock();
+            this.l.unlock();
             return true;
         }
     }
@@ -104,6 +104,9 @@ public class Bank {
 
     boolean transfer (int from, int to, int value)
     {
+        if (from< 0 || from>= slots || to< 0 || from>= slots)
+            return false;
+
         av[from].lock();
         av[to].lock();
 
@@ -111,12 +114,6 @@ public class Bank {
         {
             if (!av[from].withdraw(value))
                 return false;
-
-            if (!av[to].deposit(value))
-            {
-                av[from].deposit(value);
-                return false;
-            }
 
             return true;
         }
