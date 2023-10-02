@@ -13,13 +13,15 @@ public class Bank {
 
         int balance()
         {
-            int b;
-
             this.l.lock();
-            b= balance; 
-            this.l.unlock();
-
-            return b;
+            try
+            {
+                return balance;
+            }
+            finally
+            {
+                this.l.unlock();
+            }
         }
 
         boolean deposit(int value)
