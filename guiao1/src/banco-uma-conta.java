@@ -19,13 +19,19 @@ class Bank {
   private Account savings = new Account(0);
 
   // Account balance
-  public long balance() {
+  public long balance() extends ReentrantLock
+  {
+    this.lock();
     return savings.balance();
+    this.unlock();
   }
 
   // Deposit
-  boolean deposit(long value) {
+  boolean deposit(long value) extends ReentrantLock
+  {
+    this.lock();
     return savings.deposit(value);
+    this.unlock();
   }
 }
 
