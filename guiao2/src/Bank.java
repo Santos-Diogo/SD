@@ -117,7 +117,6 @@ public class Bank {
             av[from].lock();
         }
 
-
         try
         {
             withdraw(from, value);
