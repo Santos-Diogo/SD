@@ -60,7 +60,7 @@ public class Bank {
         if (id < 0 || id >= slots)
             return 0;
 
-        this.av[id].lock();
+        av[id].lock();
         try
         {
             return av[id].balance();
@@ -106,22 +106,30 @@ public class Bank {
 
     boolean transfer (int from, int to, int value)
     {
-        av[from].lock();
+        if (from< to)
+        {
+            av[from].lock();
+            av[to].lock();
+        }
+        else
+        {   
+            av[to].lock();
+            av[from].lock();
+        }
+
+
         try
         {
-            if (withdraw(from, value))
-            return false;
+            withdraw(from, value);
         }
         finally
         {
             av[from].unlock();
         }
         
-        av[to].lock();
         try
         {
-            deposit(to, value);
-            return true;
+            return deposit(to, value);
         }
         finally
         {
@@ -134,7 +142,13 @@ public class Bank {
         int sum= 0;
         for (int i= 0; i< slots; i++)
         {
+            av[i].lock();
+        }
+
+        for (int i= 0; i< slots; i++)
+        {
             sum+= balance(i);
+            av[i].unlock();
         }
 
         return sum;
