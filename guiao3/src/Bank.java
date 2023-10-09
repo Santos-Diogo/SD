@@ -214,6 +214,9 @@ class Bank {
     // sum of balances in set of accounts; 0 if some does not exist
     public int totalBalance(int[] ids) {
         int total = 0;
+        int length= ids.length;
+        Account [] a_v= new Account [length];
+
         GIGALOCK.lock();
         try
         {
@@ -222,21 +225,21 @@ class Bank {
                 Account c = map.get(i);
                 if (c == null)
                     return 0;
-
+            }
+            for (Account c: a_v)
+            {
                 c.l.lock();
-                try
-                {    
-                    total += c.balance();
-                }
-                finally
-                {    
-                    c.l.unlock();
-                }
             }
         }
         finally
         {
             GIGALOCK.unlock();
+        }
+    
+        for (Account c: a_v)
+        {
+            total+= c.balance();
+            c.l.unlock();
         }
         return total;
   }
