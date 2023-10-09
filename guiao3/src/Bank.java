@@ -215,6 +215,7 @@ class Bank {
     public int totalBalance(int[] ids) {
         int total = 0;
         int length= ids.length;
+        Arrays.sort(ids);                       //A ordem de aquisição tem de ser igual à da utilizada nas transferenias
         Account [] a_v= new Account [length];
 
         GIGALOCK.lock();
