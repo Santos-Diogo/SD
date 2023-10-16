@@ -21,7 +21,7 @@ class Barrier
         {
             while (open)
                 cond.await();
-                
+
             t_count++;    
             if (t_count== t_max)
             {
@@ -35,7 +35,10 @@ class Barrier
                 cond.await();
                 t_count--;
                 if (t_count== 0)
-                open= false;
+                {
+                    open= false;
+                    cond.signalAll();
+                }
             }
         }
         finally
