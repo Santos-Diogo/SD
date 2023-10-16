@@ -23,7 +23,7 @@ public class BankTest {
 
     public static void main(String[] args) throws InterruptedException {
         final int N=10;
-
+        
         Bank b = new Bank(N);
 
         for (int i=0; i<N; i++) 
