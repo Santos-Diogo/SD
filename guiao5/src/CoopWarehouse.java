@@ -37,17 +37,25 @@ class GreedyWarehouse
 		l.lock();
 		try
 		{
-			for (Stirng s: items)
+			//get all products
+			for (String s: items)
 			{
 				Product p= get(s);
+				done.add(p);
+			}
+
+			for (Product p: done)
+			{
 				if (p.quantity== 0)
 				{
 					l.unlock();
+					while (p.quantity== 0)
+						wait();
 					consume(items);
+					return;
 				}
-				else
-					done.add(p);
 			}
+
 			for (Product p: done)
 			{
 				p.quantity--;
