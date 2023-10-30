@@ -7,48 +7,35 @@ import java.net.Socket;
 
 public class SomaServer 
 {
+    private static ServerSocket ss;
+    private static Shared shared= new Shared ();
 
     public static void main(String[] args) 
     {
         try 
         {
-            ServerSocket ss = new ServerSocket(12345);
-
-            //sum of all the input numbers
-            int sum= 0;
-            //count of the input numbers
-            int count= 0;
-
+            ss = new ServerSocket(12345);
 
             while (true) 
             {
                 Socket socket = ss.accept();
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter out = new PrintWriter(socket.getOutputStream());
-
-                String line;
-                while ((line = in.readLine()) != null) 
-                {
-                    sum+= Integer.parseInt(line);
-                    count++;
-
-                    out.println(sum);
-                    out.flush();
-                }
-                
-                //termination message
-                out.println(sum/ count);
-                out.flush();
-                
-                socket.shutdownInput();
-                socket.shutdownOutput();
-                socket.close();
+                new Thread(new ServerThread(socket, shared)).start();;
             }
         } 
         catch (IOException e) 
         {
             e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                ss.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 }

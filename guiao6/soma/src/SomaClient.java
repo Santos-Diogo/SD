@@ -34,7 +34,7 @@ public class SomaClient {
             socket.shutdownInput();
             socket.close();
 
-        } 
+        }
         catch (Exception e) 
         {
             e.printStackTrace();
