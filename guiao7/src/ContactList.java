@@ -23,7 +23,7 @@ class ContactList extends ArrayList<Contact>
         int size= in.readInt();
         for (int i= 0; i< size; i++)
         {
-            l.add(in.deserialize(out));
+            l.add(Contact.deserialize(in));
         }
 
         return l;
