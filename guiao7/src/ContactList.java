@@ -10,9 +10,7 @@ class ContactList extends ArrayList<Contact>
     {
         out.writeInt(this.size());
         for (Contact c: this)
-        {
             c.serialize(out);
-        }
     }
 
     // @TODO
@@ -22,9 +20,7 @@ class ContactList extends ArrayList<Contact>
 
         int size= in.readInt();
         for (int i= 0; i< size; i++)
-        {
             l.add(Contact.deserialize(in));
-        }
 
         return l;
     }
