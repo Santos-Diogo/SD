@@ -1,0 +1,1 @@
+não dar flush na serialização.
