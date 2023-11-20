@@ -1,66 +1,95 @@
 package g8;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class FramedConnection implements AutoCloseable 
+import javax.swing.InputMap;
+
+public class FrammedConnection implements AutoCloseable 
 {
-    private ReentrantLock rl= new ReentrantLock();
-    private ReentrantLock wl= new ReentrantLock();
-    private InputStream in;
-    private OutputStream out;
-
-    public FramedConnection(Socket socket) throws IOException
+    public static class Frame 
     {
-        in= socket.getInputStream();
-        out= socket.getOutputStream();
-    }
+        public final int tag;
+        public final byte[] data;
 
-    public void send(byte[] data) throws IOException
-    {
-        this.wl.lock();
-        try
+        public Frame (int tag, byte[] data) 
         {
-            this.out.s.writeInt(data.length);
-            this.out.s.write(data);
-        }
-        finally
-        {
-            this.wl.unlock();
+            this.tag = tag;
+            this.data = data;
         }
     }
 
-    public byte[] receive() throws IOException
+    private ReentrantLock r_l;
+    private DataInputStream in;
+    private ReentrantLock w_l;
+    private DataOutputStream out;
+
+    public TaggedConnection(Socket socket) throws IOException 
     {
-        this.rl.lock();
+        this.r_l= new ReentrantLock();
+        this.in= socket.getDataInputStream();
+        this.w_l= new ReentrantLock();
+        this.out= socket.getDataOutputStream();
+    }
+    
+    public void send(Frame frame) throws IOException 
+    {
         try
         {
-            int len= this.in.s.readInt();
-            return this.in.s.readFully(len);
+            w_l.lock();
+            out.write(frame);
         }
         finally
         {
-            this.rl.unlock();
+            w_l.unlock();
         }
     }
 
-    public void close() throws IOException
+    public void send(int tag, byte[] data) throws IOException 
     {
-        this.wl.lock();
-        this.rl.lock();
         try
         {
-            this.in.close();
-            this.out.flush();            
-            this.out.close();
+            w_l.lock();
+            out.writeInt(tag);
+            out.writeInt(data.length);
+            out.write(data);
+            out.flush();
         }
         finally
         {
-            this.wl.unlock();
-            this.rl.unlock();
-        }    
+            w_l.unlock();
+        }
+    }
+
+    public Frame receive() throws IOException 
+    {
+        try
+        {
+            r_l.lock();
+            int tag= in.readInt();
+            byte[] data= in.readNBytes(in.readInt());
+            return new Frame (tag, data);
+        }
+        finally
+        {
+            r_l.unlock();
+        }
+    }
+
+    public void close() throws IOException 
+    {
+        try
+        {
+            w_l.lock();
+            r_l.lock();
+            in.close();
+            out.close();
+        }
+        finally
+        {
+            w_l.unlock();
+            r_l.unlock();
+        }
     }
 }
